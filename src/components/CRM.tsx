@@ -6,7 +6,8 @@ export default function CRM(){
   const customers = useStore(s=>s.customers);
   const setNotes = useStore(s=>s.setCustomerNotes);
   const addAudio = useStore(s=>s.addAudio);
-  const summarize = useStore(s=>s.summarizeCustomerAudio);
+  const runCRMSummary = useStore(s=>s.runCRMSummary);
+  const crmAITexts = useStore(s=>s.crmAITexts);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const uploadAudio = (customerId:string)=>{
@@ -29,8 +30,14 @@ export default function CRM(){
               <div style={{marginTop:6}}><textarea className="input" placeholder="Anteckningar…" value={c.notes||''} onChange={e=>setNotes(c.id,e.target.value)} /></div>
               <div style={{marginTop:6,display:'flex',gap:6}}>
                 <button className="btn" onClick={()=>uploadAudio(c.id)}>Ladda upp ljud</button>
-                <button className="btn" onClick={()=>alert(summarize(c.id))}>Sammanfatta alla möten</button>
+                <button className="btn" onClick={async()=>{ await runCRMSummary(c.id); }}>Sammanfatta med AI</button>
               </div>
+              {crmAITexts[c.id] && (
+                <div style={{marginTop:6}} className="card">
+                  <b>AI-Sammanfattning</b>
+                  <div style={{whiteSpace:'pre-wrap'}}>{crmAITexts[c.id]}</div>
+                </div>
+              )}
             </li>
           ))}
         </ul>
