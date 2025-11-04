@@ -1,6 +1,21 @@
 import "@/styles/globals.css";
-import React from "react";
-export const metadata = { title: "MergX v8.56C", description: "AI-driven Adminsystem" };
+import Sidebar from "@/components/Sidebar";
+import Topbar from "@/components/Topbar";
+
+export const metadata = { title: "MergX v8.95", description: "AI-driven B2B Admin" };
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (<html lang="sv"><body>{children}</body></html>);
+  return (
+    <html lang="sv">
+      <body>
+        <div className="layout">
+          <Sidebar />
+          <main className="main">
+            <Topbar />
+            {children}
+          </main>
+        </div>
+      </body>
+    </html>
+  );
 }
