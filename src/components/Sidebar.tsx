@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { useStore } from '@/lib/store';
 
 const ITEMS = [
+ const ITEMS = [
   {key:"dashboard",label:"Översikt",icon:"🏠"},
   {key:"crm",label:"Kunder (CRM)",icon:"👥"},
   {key:"map",label:"AI-Karta",icon:"🗺️"},
@@ -12,9 +13,9 @@ const ITEMS = [
   {key:"chat",label:"Chatt",icon:"💬"},
   {key:"supervisor",label:"AI-Supervisor",icon:"🧠"},
   {key:"employees",label:"Anställda",icon:"👤"},
+  {key:"api",label:"API Manager",icon:"🔑"},
   {key:"settings",label:"Inställningar",icon:"⚙️"},
 ];
-
 export default function Sidebar(){
   const page = useStore(s=>s.page);
   const setPage = useStore(s=>s.setPage);
