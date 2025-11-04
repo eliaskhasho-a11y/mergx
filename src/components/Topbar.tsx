@@ -1,14 +1,19 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from "react";
 
-export default function Topbar(){
+export default function Topbar() {
+  const [light, setLight] = useState(false);
+  useEffect(() => {
+    document.documentElement.classList.toggle("light", light);
+  }, [light]);
+
   return (
     <div className="topbar">
-      <input className="search" placeholder="Sök i MergX…"/>
+      <input className="search" placeholder="Sök i MergX…" />
       <div className="filters">
-        <button>Idag</button>
-        <button>7 dagar</button>
-        <button>30 dagar</button>
+        <button onClick={() => setLight(l => !l)}>
+          {light ? "Mörkt tema" : "Ljust tema"}
+        </button>
       </div>
     </div>
   );
