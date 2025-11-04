@@ -1,10 +1,15 @@
 'use client';
 import React from 'react';
+
 export default function Topbar(){
   return (
-    <header className="topbar">
-      <input className="search" placeholder="Sök eller fråga AI…" />
-      <div className="filters"><button>Idag</button><button>Vecka</button><button>Månad</button></div>
-    </header>
+    <div className="topbar">
+      <input className="search" placeholder="Sök i MergX…"/>
+      <div className="filters">
+        <button>Idag</button>
+        <button>7 dagar</button>
+        <button>30 dagar</button>
+      </div>
+    </div>
   );
 }
