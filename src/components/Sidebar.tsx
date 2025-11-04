@@ -8,6 +8,7 @@ const ITEMS = [
   {key:"crm",label:"Kunder (CRM)",icon:"👥"},
   {key:"map",label:"AI-Karta",icon:"🗺️"},
   {key:"economy",label:"Ekonomi",icon:"💰"},
+  {key:"files",label:"Filer & kvitton",icon:"🧾"},
   {key:"chat",label:"Chatt",icon:"💬"},
   {key:"supervisor",label:"AI-Supervisor",icon:"🧠"},
   {key:"employees",label:"Anställda",icon:"👤"},
@@ -20,7 +21,7 @@ export default function Sidebar(){
   return (
     <aside className="sidebar">
       <div className="brand">
-        <div className="logo"/><div><h2>MergX</h2><small>v8.56C</small></div>
+        <div className="logo"/><div><h2>MergX</h2><small>v8.70</small></div>
       </div>
       <nav className="nav">
         {ITEMS.map(it=>(
