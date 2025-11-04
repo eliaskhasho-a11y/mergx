@@ -1,10 +1,18 @@
 'use client';
+
 import React, { useEffect } from "react";
 import { useStore } from "@/lib/store";
-import EconomyChart from "@/components/EconomyChart';
+import EconomyChart from "@/components/EconomyChart";
 
 export default function DashboardPage() {
   const { aiBusy, runCompanyAISummary, companyAISummary } = useStore();
+
+  return (
+    <main>
+      <EconomyChart />
+    </main>
+  );
+}
 
   useEffect(() => {
     // Kör AI-överblick automatiskt vid första start
