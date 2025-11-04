@@ -3,6 +3,7 @@ import React from 'react';
 import Sidebar from '@/components/Sidebar';
 import Topbar from '@/components/Topbar';
 import { useStore } from '@/lib/store';
+
 import Dashboard from '@/components/Dashboard';
 import CRM from '@/components/CRM';
 import Map from '@/components/Map';
@@ -12,6 +13,7 @@ import Settings from '@/components/Settings';
 import Economy from '@/components/Economy';
 import Chat from '@/components/Chat';
 import AICoach from '@/components/AICoach';
+import ReportPreview from '@/components/ReportPreview';
 
 export default function Home(){
   const page = useStore(s=>s.page);
@@ -34,6 +36,7 @@ export default function Home(){
         <Topbar/>
         {render()}
         <AICoach/>
+        <ReportPreview/>
       </div>
     </div>
   );
