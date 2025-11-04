@@ -1,5 +1,6 @@
 // ...imports kvar som i 8.60
 import Files from '@/components/Files';
+import ApiManager from '@/components/ApiManager';
 
 export default function Home(){
   const page = useStore(s=>s.page);
@@ -13,6 +14,7 @@ export default function Home(){
       case 'economy': return <Economy/>;
       case 'chat': return <Chat/>;
       case 'files': return <Files/>;
+      case 'api': return <ApiManager/>;
       default: return <Dashboard/>;
     }
   };
