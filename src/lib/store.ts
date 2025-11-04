@@ -1,20 +1,37 @@
-
 import { create } from "zustand";
-export type Employee = { id: string; name: string; role: string; email: string; phone?: string; revenue?: number; expenses?: number };
+
+export type Employee = { id: string; name: string; role: string; email: string; access?: string[] };
+export type Customer = { id:string; name:string; city:string; status:string; ownerId?:string; notes?:string };
+
 type State = {
   page: string; setPage: (p: string) => void;
-  range: "day"|"week"|"month"; setRange: (r: "day"|"week"|"month") => void;
-  employees: Employee[];
-  addEmployee: (e: Employee) => void; updateEmployee: (id: string, patch: Partial<Employee>) => void; removeEmployee: (id: string) => void;
+  employees: Employee[]; customers: Customer[];
+  toggleAccess: (empId:string, module:string)=>void;
 };
-export const useStore = create<State>((set) => ({
-  page: "dashboard", setPage: (p) => set({ page: p }),
-  range: "day", setRange: (r) => set({ range: r }),
-  employees: [
-    { id:"emp_1", name:"Jimmie", role:"Sälj", email:"jimmie@example.com", phone:"+46 70 111 22 33", revenue:214000, expenses:9200 },
-    { id:"emp_2", name:"Anna", role:"Ekonomi", email:"anna@example.com", revenue:0, expenses:1200 },
+
+export const useStore = create<State>((set,get)=> ({
+  page:"dashboard",
+  setPage:(p)=>set({page:p}),
+  employees:[
+    {id:"emp_1",name:"Jimmie",role:"Sälj",email:"jimmie@example.com",access:["crm","map","chat"]},
+    {id:"emp_2",name:"Anna",role:"Ekonomi",email:"anna@example.com",access:["economy"]},
   ],
-  addEmployee: (e) => set(s => ({ employees: [...s.employees, e] })),
-  updateEmployee: (id, patch) => set(s => ({ employees: s.employees.map(x => x.id===id ? { ...x, ...patch } : x) })),
-  removeEmployee: (id) => set(s => ({ employees: s.employees.filter(x => x.id!==id) })),
+  customers:[
+    {id:"c1",name:"Elon Kista",city:"Stockholm",status:"Potentiell order (20 dagar)",ownerId:"emp_1"},
+    {id:"c2",name:"Mekonomen Solna",city:"Solna",status:"Befintlig kund",ownerId:"emp_1"},
+  ],
+  toggleAccess:(empId,module)=>{
+    set(s=>{
+      const emps = s.employees.map(e=>{
+        if(e.id===empId){
+          const access = e.access||[];
+          return access.includes(module)
+            ? {...e,access:access.filter(a=>a!==module)}
+            : {...e,access:[...access,module]};
+        }
+        return e;
+      });
+      return {employees:emps};
+    });
+  }
 }));
