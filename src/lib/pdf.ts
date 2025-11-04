@@ -1,4 +1,3 @@
-// Lightweight helper to generate PDFs on client using html2pdf.js (loaded once)
 let html2pdfLoaded = false;
 function loadHtml2Pdf(): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -21,10 +20,8 @@ export async function exportTextAsPDF(filename: string, content: string) {
   document.body.appendChild(container);
   // @ts-ignore
   await window.html2pdf().set({
-    margin: 10,
-    filename: filename.endsWith('.pdf') ? filename : `${filename}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
+    margin: 10, filename: filename.endsWith('.pdf') ? filename : `${filename}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   }).from(container).save();
   document.body.removeChild(container);
@@ -34,10 +31,8 @@ export async function exportElementAsPDF(filename: string, el: HTMLElement) {
   await loadHtml2Pdf();
   // @ts-ignore
   await window.html2pdf().set({
-    margin: 10,
-    filename: filename.endsWith('.pdf') ? filename : `${filename}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
+    margin: 10, filename: filename.endsWith('.pdf') ? filename : `${filename}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   }).from(el).save();
 }
