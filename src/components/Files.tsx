@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { useStore } from '@/lib/store';
+import { exportTextAsPDF } from '@/lib/pdf';
 
 export default function Files(){
   const receipts = useStore(s=>s.receipts);
@@ -14,12 +15,26 @@ export default function Files(){
     URL.revokeObjectURL(a.href);
   };
 
+  const exportReceiptPDF = (id:string)=>{
+    const r = receipts.find(x=>x.id===id); if(!r) return;
+    const html = `
+<h2>Kvitto</h2>
+<p><b>Datum:</b> ${r.date}</p>
+<p><b>Leverantör:</b> ${r.supplier}</p>
+<p><b>Belopp:</b> ${r.amount.toLocaleString('sv-SE')} kr</p>
+<p><b>Moms:</b> ${r.vat.toLocaleString('sv-SE')} kr</p>
+<p><b>Kategori:</b> ${r.category}</p>
+<p><b>Status:</b> ${r.status}</p>
+<small>Genererad av MergX v8.80</small>`;
+    exportTextAsPDF(`Kvitto_${r.id}`, html);
+  };
+
   return (
     <div className="content">
       <section className="card">
         <h3 style={{marginTop:0}}>Filer & kvitton</h3>
         <div style={{display:'flex',gap:8,marginBottom:8}}>
-          <button className="btn" onClick={exportCSV}>Exportera CSV</button>
+          <button type="button" className="btn" onClick={exportCSV}>Exportera CSV</button>
         </div>
         <table className="table">
           <thead><tr><th>Datum</th><th>Leverantör</th><th>Belopp</th><th>Moms</th><th>Kategori</th><th>Status</th><th></th></tr></thead>
@@ -33,8 +48,9 @@ export default function Files(){
                 <td>{r.category}</td>
                 <td><span className="badge">{r.status}</span></td>
                 <td style={{display:'flex',gap:6}}>
-                  <button className="btn" onClick={()=>update(r.id,{status:'Registrerad'})}>Lägg som utgift</button>
-                  <button className="btn" onClick={()=>update(r.id,{status:'Ignorerad'})}>Ignorera</button>
+                  <button type="button" className="btn" onClick={()=>update(r.id,{status:'Registrerad'})}>Lägg som utgift</button>
+                  <button type="button" className="btn" onClick={()=>update(r.id,{status:'Ignorerad'})}>Ignorera</button>
+                  <button type="button" className="btn" onClick={()=>exportReceiptPDF(r.id)}>PDF</button>
                 </td>
               </tr>
             ))}
