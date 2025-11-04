@@ -6,10 +6,7 @@ import { Line } from 'react-chartjs-2';
 import { exportTextAsPDF } from '@/lib/pdf';
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Legend);
 
-const QUARTERS = {
-  'Q1':['Jan','Feb','Mar'],'Q2':['Apr','Maj','Jun'],'Q3':['Jul','Aug','Sep'],
-  'Q4':['Okt','Nov','Dec'],'Året':['Jan','Feb','Mar','Apr','Maj','Jun','Jul','Aug','Sep','Okt','Nov','Dec']
-} as const;
+const QUARTERS = { 'Q1':['Jan','Feb','Mar'],'Q2':['Apr','Maj','Jun'],'Q3':['Jul','Aug','Sep'],'Q4':['Okt','Nov','Dec'],'Året':['Jan','Feb','Mar','Apr','Maj','Jun','Jul','Aug','Sep','Okt','Nov','Dec'] } as const;
 
 export default function Economy(){
   const rows = useStore(s=>s.economyRows);
@@ -42,7 +39,7 @@ export default function Economy(){
 <hr/>
 <h3>Transaktioner</h3>
 ${rows.map(r=>`<p>${r.date} – ${r.name} — ${r.type} — ${r.amount.toLocaleString('sv-SE')} kr</p>`).join('')}
-<small>Genererad av MergX v8.80</small>`;
+<small>Genererad av MergX v8.90</small>`;
     exportTextAsPDF('MergX_Ekonomi', html);
   };
 
