@@ -14,7 +14,6 @@ export default function Files(){
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'kvitton.csv'; a.click();
     URL.revokeObjectURL(a.href);
   };
-
   const exportReceiptPDF = (id:string)=>{
     const r = receipts.find(x=>x.id===id); if(!r) return;
     const html = `
@@ -25,7 +24,7 @@ export default function Files(){
 <p><b>Moms:</b> ${r.vat.toLocaleString('sv-SE')} kr</p>
 <p><b>Kategori:</b> ${r.category}</p>
 <p><b>Status:</b> ${r.status}</p>
-<small>Genererad av MergX v8.80</small>`;
+<small>Genererad av MergX v8.90</small>`;
     exportTextAsPDF(`Kvitto_${r.id}`, html);
   };
 
