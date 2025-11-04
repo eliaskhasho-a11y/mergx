@@ -1,5 +1,4 @@
 :root{
-  /* Light theme palette */
   --bg:#f7f7fb; --panel:#ffffff; --panel2:#f4f6fa; --stroke:#e4e6ee;
   --text:#0f1222; --muted:#6b7280; --green:#16a34a; --red:#dc2626;
   --blue:#2563eb; --cyan:#0891b2
@@ -17,7 +16,8 @@ a{color:inherit;text-decoration:none}
 .nav{display:flex;flex-direction:column;margin-top:8px}
 .nav button{display:flex;align-items:center;gap:8px;border:1px solid transparent;
   background:transparent;color:var(--text);padding:8px 10px;border-radius:10px;margin:2px 4px;cursor:pointer}
-.nav button:hover{background:var(--panel2);border-color:var(--stroke)}.nav .active{background:#e9efff;border-color:#c7d2fe}
+.nav button:hover{background:var(--panel2);border-color:var(--stroke)}
+.nav .active{background:#e9efff;border-color:#c7d2fe}
 .main{flex:1;display:flex;flex-direction:column;min-width:0}
 .topbar{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--stroke);
   padding:10px 14px;background:var(--panel);position:sticky;top:0;z-index:10;gap:10px}
