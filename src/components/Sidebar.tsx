@@ -4,7 +4,6 @@ import clsx from 'clsx';
 import { useStore } from '@/lib/store';
 
 const ITEMS = [
- const ITEMS = [
   {key:"dashboard",label:"Översikt",icon:"🏠"},
   {key:"crm",label:"Kunder (CRM)",icon:"👥"},
   {key:"map",label:"AI-Karta",icon:"🗺️"},
@@ -16,13 +15,16 @@ const ITEMS = [
   {key:"api",label:"API Manager",icon:"🔑"},
   {key:"settings",label:"Inställningar",icon:"⚙️"},
 ];
+
 export default function Sidebar(){
   const page = useStore(s=>s.page);
   const setPage = useStore(s=>s.setPage);
+  const aiBusy = useStore(s=>s.aiBusy);
   return (
     <aside className="sidebar">
       <div className="brand">
-        <div className="logo"/><div><h2>MergX</h2><small>v8.70</small></div>
+        <div className="logo"/><div><h2>MergX</h2><small>v8.90</small><br/>
+        <small style={{color: aiBusy ? 'var(--blue)' : 'var(--muted)'}}>{aiBusy ? 'AI: arbetar…' : 'AI: klar'}</small></div>
       </div>
       <nav className="nav">
         {ITEMS.map(it=>(
