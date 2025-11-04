@@ -13,7 +13,7 @@ export default function ApiManager(){
   const actionFinanceSellInvoice = useStore(s=>s.actionFinanceSellInvoice);
   const actionWhatsApp = useStore(s=>s.actionWhatsApp);
 
-  const [form, setForm] = useState({ name:'', key:'', type:'Custom', description:'' });
+  const [form, setForm] = useState({ name:'HuggingFace', key:'', type:'AI', description:'Gratis AI via HF' });
 
   return (
     <div className="content">
@@ -23,7 +23,7 @@ export default function ApiManager(){
         <div className="grid3" style={{marginBottom:12}}>
           <div className="card">
             <b>Lägg till ny nyckel</b>
-            <input className="input" placeholder="Namn (t.ex. OpenAI)" value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/>
+            <input className="input" placeholder="Namn (t.ex. HuggingFace)" value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/>
             <input className="input" placeholder="Nyckelvärde" value={form.key} onChange={e=>setForm({...form,key:e.target.value})}/>
             <input className="input" placeholder="Typ (AI / Maps / Comms / Finance / Shipping / Custom)" value={form.type} onChange={e=>setForm({...form,type:e.target.value})}/>
             <input className="input" placeholder="Beskrivning" value={form.description} onChange={e=>setForm({...form,description:e.target.value})}/>
@@ -31,13 +31,13 @@ export default function ApiManager(){
               <button className="btn" onClick={()=>{
                 if(!form.name || !form.key){ alert('Fyll i namn och nyckel.'); return; }
                 addApiKey({ name:form.name, key:form.key, type:form.type, description:form.description });
-                setForm({ name:'', key:'', type:'Custom', description:'' });
+                setForm({ name:'HuggingFace', key:'', type:'AI', description:'Gratis AI via HF' });
               }}>Spara</button>
             </div>
           </div>
 
           <div className="card">
-            <b>Snabbtest (mock) </b>
+            <b>Snabbtest (mock)</b>
             <div style={{display:'flex',gap:8,flexWrap:'wrap',marginTop:8}}>
               <button className="btn" onClick={()=>actionShipment('MergX HQ','Kundadress',5).then(t=>alert('Tracking: '+t))}>Testa Fraktbokning</button>
               <button className="btn" onClick={()=>actionFinanceSellInvoice('INV-1001',6400).then(r=>alert(r))}>Testa Finans</button>
