@@ -44,7 +44,8 @@ export default function Employees(){
                   ))}
                 </td>
                 <td>
-                  <button className="btn" onClick={()=>{ setEditing(e.id); setForm({...e, id:undefined as any}); }}>Redigera</button>
+                  <button className="btn" onClick={()=>{ setEditing(e.id); const { id, ...rest } = e as any;
+setForm(rest); }}>Redigera</button>
                   <button className="btn" onClick={()=>remove(e.id)}>Ta bort</button>
                 </td>
               </tr>
