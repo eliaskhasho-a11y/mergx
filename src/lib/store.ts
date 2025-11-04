@@ -1,13 +1,12 @@
 import { create } from "zustand";
 import type { ApiKey, ApiLog } from "./api";
 import { testKey, sendShipment, sendFinance, sendWhatsApp } from "./api";
+import { callAI, promptDashboardAnalysis, promptSupervisorReport, promptCRMSummary } from "./ai";
 
-/* ==== Types (som 8.70) ==== */
 export type Employee = {
   id: string; name: string; role: string; email: string;
   phone?: string; salary?: number; department?: string;
-  revenue?: number; expenses?: number;
-  access?: string[];
+  revenue?: number; expenses?: number; access?: string[];
 };
 export type Customer = {
   id: string; name: string; city: string; status: string; ownerId?: string; notes?: string;
@@ -19,43 +18,34 @@ export type Receipt = {
   status:'Föreslagen'|'Registrerad'|'Ignorerad'; fileName?:string;
 };
 
-/* ==== State ==== */
 type State = {
   page: string; setPage: (p:string)=>void;
 
-  // Employees
   employees: Employee[];
   addEmployee: (e: Omit<Employee,"id">)=>void;
   updateEmployee: (id:string, patch: Partial<Employee>)=>void;
   removeEmployee: (id:string)=>void;
   toggleAccess: (empId:string, module:string)=>void;
 
-  // Customers + audio
   customers: Customer[]; audio: AudioNote[];
   addAudio: (a: AudioNote)=>void; summarizeCustomerAudio: (customerId:string)=>string;
   setCustomerNotes: (id:string, notes:string)=>void;
 
-  // Economy
   economyRows: { id:number; name:string; amount:number; type:'Inkomst'|'Utgift'; date:string }[];
   totals: ()=>{ revenue:number; cost:number; profit:number };
 
-  // Receipts (OCR)
   receipts: Receipt[];
   addReceipt: (r:Receipt)=>void; updateReceipt:(id:string,patch:Partial<Receipt>)=>void;
   ocrExtract: (fileName:string)=>Receipt;
 
-  // Reports
   alerts: { id:string; type:string; msg:string }[];
   reports: Report[]; generateReport: ()=>void;
   reportOpen: boolean; openReport: ()=>void; closeReport: ()=>void;
 
-  // KPI
   kpiExpanded: null | "oms" | "ord" | "kos" | "bm"; setKpiExpanded: (k:State["kpiExpanded"])=>void;
 
-  // API Keys & Logs
-  apiKeys: ApiKey[];
-  apiLogs: ApiLog[];
-  addApiKey: (k: Omit<ApiKey,'id'|'createdAt'|'active'> & Partial<Pick<ApiKey,'active'>>) => void;
+  apiKeys: ApiKey[]; apiLogs: ApiLog[];
+  addApiKey: (k: Omit<ApiKey,'id'|'createdAt'|'active'> & Partial<Pick<ApiKey,'active'>>)=>void;
   updateApiKey: (id:string, patch: Partial<ApiKey>)=>void;
   removeApiKey: (id:string)=>void;
   logApi: (entry: Omit<ApiLog,'id'|'time'>)=>void;
@@ -63,6 +53,14 @@ type State = {
   actionShipment: (from:string, to:string, weight:number)=>Promise<string>;
   actionFinanceSellInvoice: (invoiceId:string, amount:number)=>Promise<string>;
   actionWhatsApp: (to:string, message:string)=>Promise<string>;
+
+  aiBusy: boolean;
+  dashboardAIText?: string;
+  crmAITexts: Record<string,string>;
+  setAIBusy: (v:boolean)=>void;
+  runDashboardAI: ()=>Promise<void>;
+  runSupervisorAIReport: ()=>Promise<void>;
+  runCRMSummary: (customerId:string)=>Promise<string>;
 };
 
 export const useStore = create<State>((set, get)=>({
@@ -155,10 +153,8 @@ export const useStore = create<State>((set, get)=>({
   reportOpen:false, openReport:()=>set({reportOpen:true}), closeReport:()=>set({reportOpen:false}),
   kpiExpanded:null, setKpiExpanded:(k)=>set({kpiExpanded:k}),
 
-  // API Keys & Logs
   apiKeys: [
-    { id:'k1', name:'OpenAI', key:'sk-***', type:'AI', description:'LLM', createdAt:new Date().toISOString(), active:true },
-    { id:'k2', name:'WhatsApp (mock)', key:'wa-***', type:'Comms', description:'Meddelanden', createdAt:new Date().toISOString(), active:true }
+    { id:'k1', name:'HuggingFace', key:'hf_YOUR_TOKEN_HERE', type:'AI', description:'Gratis AI via HF', createdAt:new Date().toISOString(), active:true }
   ],
   apiLogs: [],
   addApiKey: (k)=> set(s=>({
@@ -172,10 +168,7 @@ export const useStore = create<State>((set, get)=>({
   updateApiKey: (id, patch)=> set(s=>({ apiKeys: s.apiKeys.map(x=> x.id===id? {...x,...patch}: x) })),
   removeApiKey: (id)=> set(s=>({ apiKeys: s.apiKeys.filter(x=>x.id!==id) })),
   logApi: (e)=> set(s=>({
-    apiLogs: [
-      ...s.apiLogs.slice(-9),
-      { id:'log_'+Math.random().toString(36).slice(2,8), time:new Date().toISOString(), ...e }
-    ]
+    apiLogs: [...s.apiLogs.slice(-9), { id:'log_'+Math.random().toString(36).slice(2,8), time:new Date().toISOString(), ...e }]
   })),
   testApiKey: async (id)=>{
     const key = get().apiKeys.find(k=>k.id===id);
@@ -201,5 +194,34 @@ export const useStore = create<State>((set, get)=>({
     const res = await sendWhatsApp({to,message});
     get().logApi({ provider:'WhatsApp', action:'send', status:'ok', latencyMs:res.latency, message:res.result });
     return res.result;
+  },
+
+  aiBusy: false, dashboardAIText:'', crmAITexts:{},
+  setAIBusy: (v)=>set({ aiBusy:v }),
+
+  async runDashboardAI() {
+    set({ aiBusy:true });
+    try {
+      const text = await callAI(promptDashboardAnalysis());
+      set({ dashboardAIText: text });
+    } finally { set({ aiBusy:false }); }
+  },
+
+  async runSupervisorAIReport() {
+    set({ aiBusy:true });
+    try {
+      const text = await callAI(promptSupervisorReport());
+      const now = new Date().toISOString().slice(0,19).replace('T',' ');
+      const rpt = { id:'rep_'+Math.random().toString(36).slice(2,8), createdAt:now, title:'AI-rapport '+now, content:text };
+      set(s=>({ reports:[...s.reports, rpt], reportOpen:true }));
+    } finally { set({ aiBusy:false }); }
+  },
+
+  async runCRMSummary(customerId:string) {
+    const c = get().customers.find(x=>x.id===customerId);
+    const prompt = promptCRMSummary(c?.name || 'Okänd kund', c?.notes || '');
+    const text = await callAI(prompt);
+    set(s=>({ crmAITexts:{ ...s.crmAITexts, [customerId]: text } }));
+    return text;
   },
 }));
